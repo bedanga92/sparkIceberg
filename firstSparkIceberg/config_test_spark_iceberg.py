@@ -1,5 +1,5 @@
-import configuration
-from get_saprk_conf import InitSparkConfig
+from firstSparkIceberg.config import configuration
+from firstSparkIceberg.config.get_saprk_conf import InitSparkConfig
 from dotenv import load_dotenv
 import os
 import logging
