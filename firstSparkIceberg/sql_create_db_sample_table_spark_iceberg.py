@@ -28,16 +28,16 @@ print("Database created successfully!")
 
 
 create_table_sql = """
-CREATE TABLE IF NOT EXISTS glue.spark_iceberg_local.customers (
-    customer_id INT,
-    name STRING,
-    email STRING,
-    age INT,
-    account_balance DOUBLE,
-    registration_date DATE
-)
-USING iceberg
-PARTITIONED BY (days(registration_date))
+                    CREATE TABLE IF NOT EXISTS glue.spark_iceberg_local.customers (
+                        customer_id INT,
+                        name STRING,
+                        email STRING,
+                        age INT,
+                        account_balance DOUBLE,
+                        registration_date DATE
+                    )
+                    USING iceberg
+                    PARTITIONED BY (days(registration_date))
 """
 
 spark.sql(create_table_sql)
