@@ -26,4 +26,4 @@ spark.sql(""" SELECT * FROM glue.spark_iceberg_local.employees_new""").show()
 
 logger.info("Selecting all the sales employees from the Iceberg table")
 
-spark.sql(""" select * from glue.spark_iceberg_local.employees_new where department='Finance' """).show()
+spark.sql(""" SELECT * FROM glue.spark_iceberg_local.employees_new WHERE department='Finance' """).show()
