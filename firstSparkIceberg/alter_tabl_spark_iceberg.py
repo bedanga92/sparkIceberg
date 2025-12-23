@@ -7,9 +7,13 @@ from pyspark.sql import SparkSession
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(name)s:%(message)s')
 logger = logging.getLogger(__name__)
-
 load_dotenv()
+
 ENV = os.getenv("RUNTIME")
+
+if ENV is None:
+    logger.error("RUNTIME environment variable is not set.")
+    raise ValueError("RUNTIME environment variable is not set.")
 
 config = getattr(configuration, f"{ENV}_CONFIG", None)
 
@@ -18,17 +22,10 @@ if config is None:
     raise ValueError(f"No configuration found for environment: {ENV}")
 
 conf = InitSparkConfig(config, "SparkScalableIcebergApp").create_spark_conf()
-
-
 spark = SparkSession.builder.config(conf=conf).master("local[*]").getOrCreate()
 
-print("Creating database spark_iceberg_local...")
-spark.sql("CREATE DATABASE IF NOT EXISTS glue.spark_iceberg_local")
-print("Database created successfully!")
-
-
 create_table_sql = """
-CREATE TABLE IF NOT EXISTS glue.spark_iceberg_local.customers (
+CREATE TABLE IF NOT EXISTS glue.spark_iceberg_local.customers_temp (
     customer_id INT,
     name STRING,
     email STRING,
@@ -41,3 +38,13 @@ PARTITIONED BY (days(registration_date))
 """
 
 spark.sql(create_table_sql)
+
+logger.info("Altering table spark_iceberg_local.customers_temp to rename it to customers_new...")
+alter_table_sql = """
+
+ALTER TABLE glue.spark_iceberg_local.customers_temp RENAME TO customers_new
+"""
+
+logger.info(f"Executing SQL: {alter_table_sql}")
+spark.sql(alter_table_sql)
+logger.info("Table renamed successfully!")
